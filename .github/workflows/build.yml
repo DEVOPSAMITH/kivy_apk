@@ -21,9 +21,7 @@ jobs:
 
     - name: Install Dependencies
       run: |
-        ls -l # Add this to list files and directories in the current workspace
         python -m pip install --upgrade pip
-        pip install -r requirements.txt # Install your project's dependencies
         pip install kivy[full] # Install the full Kivy package
         pip install python-for-android # Install the build tool
 
@@ -43,7 +41,7 @@ jobs:
     - name: Build APK
       run: |
         python -m pythonforandroid.toolchain create \
-          --requirements python3,kivy,your_other_dependencies \
+          --requirements python3,kivy \
           --name "YourAppName" \
           --package "com.yourdomain.yourappname" \
           --version 1.0 \
