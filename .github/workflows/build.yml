@@ -53,7 +53,7 @@ jobs:
         mv bin/YourAppName-*-release.apk your_app_name.apk
 
     - name: Upload APK
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4 # Changed to v4
       with:
         name: kivy-app-apk
         path: your_app_name.apk
