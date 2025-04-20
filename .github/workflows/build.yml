@@ -36,6 +36,20 @@ jobs:
           sudo apt-get install -y libssl-dev
           sudo apt-get install -y zlib1g-dev
           sudo apt-get install -y libncurses5-dev  # Use libncurses5-dev instead
+          
+      - name: Install Android SDK Build Tools and Platform Tools
+        run: |
+          # Install only the specific build tools and platforms we need
+          wget https://dl.google.com/android/repository/platform-tools_r31.0.3-linux.zip
+          unzip platform-tools_r31.0.3-linux.zip -d $HOME/android-sdk/
+          
+          # Install build-tools (36.0.0) and other required packages
+          wget https://dl.google.com/android/repository/build-tools_r36-linux.zip
+          unzip build-tools_r36-linux.zip -d $HOME/android-sdk/
+
+          # Accept the licenses for SDK components
+          yes | $HOME/android-sdk/platform-tools/bin/sdkmanager --licenses
+
 
 
 
