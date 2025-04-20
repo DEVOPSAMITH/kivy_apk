@@ -38,6 +38,7 @@ jobs:
 
       - name: Build APK
         run: |
+          pip install cpython setuptools python-for-android
           buildozer -v android debug
 
       - name: Upload APK to GitHub Releases
