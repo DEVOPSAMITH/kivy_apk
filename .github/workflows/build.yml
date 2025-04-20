@@ -12,7 +12,7 @@ jobs:
 
     steps:
     - name: Checkout Repository
-      uses: actions/checkout@v4 # Using the latest version
+      uses: actions/checkout@v4
 
     - name: Set up Python
       uses: actions/setup-python@v3
@@ -22,8 +22,8 @@ jobs:
     - name: Install Dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install kivy[full] # Install the full Kivy package
-        pip install python-for-android # Install the build tool
+        pip install --no-cache-dir kivy[full] # Install the full Kivy package
+        pip install --no-cache-dir python-for-android # Install the build tool
 
     - name: Configure Build Environment
       run: |
