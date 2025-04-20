@@ -5,6 +5,7 @@ on:
     branches: [ main ]
   pull_request:
     branches: [ main ]
+  workflow_dispatch:
 
 jobs:
   build:
@@ -25,27 +26,33 @@ jobs:
         sudo apt update
         sudo apt install -y \
           build-essential \
-          ccache \
           git \
-          libncurses5 \
+          python3-pip \
+          python3-setuptools \
+          python3-wheel \
+          libncurses6 \
           libstdc++6 \
-          libssl-dev \
           libffi-dev \
+          libssl-dev \
           libsqlite3-dev \
+          zlib1g-dev \
           openjdk-17-jdk \
           unzip \
-          zip \
-          zlib1g-dev \
-          python3-pip \
-          python3-setuptools
+          curl \
+          libgl1-mesa-dev \
+          libgles2-mesa-dev \
+          libgstreamer1.0-dev \
+          gstreamer1.0-plugins-base \
+          gstreamer1.0-plugins-good \
+          gstreamer1.0-tools
 
     - name: Install Buildozer
       run: |
-        pip install --upgrade pip
-        pip install cython
+        pip install --upgrade pip setuptools wheel
+        pip install cython virtualenv
         pip install buildozer
 
-    - name: Create .buildozer directory (if not present)
+    - name: Create .buildozer directory
       run: mkdir -p .buildozer
 
     - name: Build APK
