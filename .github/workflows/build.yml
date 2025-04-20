@@ -12,7 +12,7 @@ jobs:
 
     steps:
     - name: Checkout Repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4 # Using the latest version
 
     - name: Set up Python
       uses: actions/setup-python@v3
@@ -21,6 +21,7 @@ jobs:
 
     - name: Install Dependencies
       run: |
+        ls -l # Add this to list files and directories in the current workspace
         python -m pip install --upgrade pip
         pip install -r requirements.txt # Install your project's dependencies
         pip install kivy[full] # Install the full Kivy package
@@ -53,7 +54,7 @@ jobs:
         mv bin/YourAppName-*-release.apk your_app_name.apk
 
     - name: Upload APK
-      uses: actions/upload-artifact@v4 # Changed to v4
+      uses: actions/upload-artifact@v4
       with:
         name: kivy-app-apk
         path: your_app_name.apk
