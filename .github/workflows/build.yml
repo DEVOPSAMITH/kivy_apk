@@ -1,4 +1,4 @@
-name: Build Kivy APK on Ubuntu 22.04 with Docker
+name: Build Kivy APK (No Artifact Upload Action)
 
 on:
   push:
@@ -7,13 +7,13 @@ on:
 
 jobs:
   build-apk:
-    runs-on: ubuntu-22.04  # More stable than 24.04
+    runs-on: ubuntu-22.04  # Or 24.04 if you must
 
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
 
-    - name: Pull Kali Linux Docker image
+    - name: Pull Kali Docker image
       run: docker pull kalilinux/kali-rolling
 
     - name: Build APK inside Kali Docker container
@@ -30,8 +30,7 @@ jobs:
               && buildozer android debug
           "
 
-    - name: Upload generated APK
-      uses: actions/upload-artifact@v3.1.2  # Stable and tested version
-      with:
-        name: kivy-apk
-        path: ./bin/*.apk
+    - name: Zip APK manually
+      run: |
+        mkdir -p output
+        zip -j output/kivy_apk_build.zip bin/*.apk
