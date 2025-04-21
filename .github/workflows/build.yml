@@ -1,22 +1,22 @@
-name: Build APK
+name: Build APK for Kivy App
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
 
 jobs:
-  build-android:
-    name: Build for Android
+  build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
+      - name: Checkout the repository
         uses: actions/checkout@v2
 
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
-          python-version: '3.10'
+          python-version: '3.x'
 
       - name: Install Buildozer dependencies
         run: |
@@ -25,19 +25,21 @@ jobs:
           pip install --user --upgrade Cython virtualenv
           pip install --user --upgrade buildozer
           echo 'export PATH=$PATH:~/.local/bin/' >> ~/.bashrc
-
-      - name: Handle Java path
+		
+	- name: Handle Java path
         run: |
           export JAVA_HOME=/usr/lib/jvm/temurin-17-jdk-amd64
           sudo update-java-alternatives --set ${JAVA_HOME}
           export PATH=$JAVA_HOME/bin:$PATH
 
+
       - name: Build APK
         run: |
-          yes | buildozer -v android debug
+          buildozer -v android debug
 
-      - name: Upload artifacts
-        uses: actions/upload-artifact@latest
+      - name: Upload APK to GitHub Releases
+        uses: softprops/action-gh-release@v1
         with:
-          name: package
-          path: bin/*.apk
+          files: bin/*.apk
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
