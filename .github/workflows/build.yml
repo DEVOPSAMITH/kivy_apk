@@ -1,79 +1,42 @@
-name: Build Kivy APK
-
+name: CI
 on:
   push:
-    branches:
-      - main  # or your deployment branch
+    branches: [ main ]
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+uses: actions/checkout@v2
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
+      used to cache dependencies with a timeout
+name: Get Date
+        id: get-date
+        run: |
+          echo "::set-output name=date::$(/bin/date -u "+%Y%m%d")"
+        shell: bash
+
+name: Cache Buildozer global directory
+        uses: actions/cache@v2
         with:
-          python-version: '3.10'
+          path: .buildozer_global
+          key: buildozer-global-${{ hashFiles('buildozer.spec') }} # Replace with your path
 
-      - name: Install system dependencies
-        run: |
-          sudo apt update
-          sudo apt install -y \
-            build-essential \
-            git \
-            zip \
-            unzip \
-            openjdk-17-jdk \
-            python3-pip \
-            python3-setuptools \
-            libncurses5 \
-            libstdc++6 \
-            libffi-dev \
-            libssl-dev \
-            libsqlite3-dev \
-            zlib1g-dev \
-            curl \
-            libjpeg-dev
-
-      - name: Install buildozer
-        run: |
-          pip install --upgrade pip
-          pip install buildozer cython
-
-      - name: Set environment variables for SDK/NDK
-        run: |
-          mkdir -p $HOME/.buildozer/android/platform
-          echo "sdk.dir=$HOME/.buildozer/android/platform/android-sdk" > $GITHUB_ENV
-          echo "ndk.dir=$HOME/.buildozer/android/platform/android-ndk-r25b" >> $GITHUB_ENV
-          echo "ANDROIDSDK=$HOME/.buildozer/android/platform/android-sdk" >> $GITHUB_ENV
-          echo "ANDROIDNDK=$HOME/.buildozer/android/platform/android-ndk-r25b" >> $GITHUB_ENV
-
-      - name: Download and setup Android SDK & NDK
-        run: |
-          mkdir -p $HOME/.buildozer/android/platform
-          cd $HOME/.buildozer/android/platform
-
-          # Download SDK
-          curl -o sdk-tools.zip https://dl.google.com/android/repository/commandlinetools-linux-8512546_latest.zip
-          unzip sdk-tools.zip -d android-sdk
-          yes | android-sdk/cmdline-tools/bin/sdkmanager --sdk_root=${HOME}/.buildozer/android/platform/android-sdk --licenses
-          android-sdk/cmdline-tools/bin/sdkmanager --sdk_root=${HOME}/.buildozer/android/platform/android-sdk \
-            "platform-tools" "platforms;android-31" "build-tools;31.0.0"
-
-          # Download NDK
-          curl -o ndk.zip https://dl.google.com/android/repository/android-ndk-r25b-linux.zip
-          unzip ndk.zip
-          mv android-ndk-r25b android-ndk-r25b
-
-      - name: Build APK with Buildozer
-        run: |
-          buildozer android debug
-
-      - name: Upload APK artifact
-        uses: actions/upload-artifact@v3
+uses: actions/cache@v2
         with:
-          name: kivy-apk
-          path: bin/*.apk
+          path: .buildozer
+          key: ${{ runner.os }}-${{ steps.get-date.outputs.date }}-${{ hashFiles('buildozer.spec') }}
+
+name: Build with Buildozer
+        uses: ArtemSBulgakov/buildozer-action@v1
+        id: buildozer
+        with:
+          command: buildozer android debug
+          buildozer_version: stable
+
+name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: package
+          path: ${{ steps.buildozer.outputs.filename }}
