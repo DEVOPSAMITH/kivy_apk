@@ -1,35 +1,43 @@
-name: Build Kivy APK (No Artifact Upload Action)
+name: Build APK
 
 on:
   push:
     branches: [ main ]
-  workflow_dispatch:
 
 jobs:
-  build-apk:
-    runs-on: ubuntu-22.04  # Or 24.04 if you must
+  build-android:
+    name: Build for Android
+    runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v2
 
-    - name: Pull Kali Docker image
-      run: docker pull kalilinux/kali-rolling
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.10'
 
-         docker run --rm \
-           -v ${{ github.workspace }}:/app \
-          -w /app \
-          kalilinux/kali-rolling /bin/bash -c "
-            apt-get update &&
-            apt-get install -y python3-pip git zip openjdk-17-jdk wget unzip curl libffi-dev libssl-dev libjpeg-dev zlib1g-dev build-essential ccache \
-            && pip3 install --upgrade pip \
-            && pip3 install cython virtualenv buildozer \
-            && buildozer android debug
-          "
+      - name: Install Buildozer dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y git zip unzip python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 cmake libffi-dev libssl-dev automake
+          pip install --user --upgrade Cython virtualenv
+          pip install --user --upgrade buildozer
+          echo 'export PATH=$PATH:~/.local/bin/' >> ~/.bashrc
 
-          "
+      - name: Handle Java path
+        run: |
+          export JAVA_HOME=/usr/lib/jvm/temurin-17-jdk-amd64
+          sudo update-java-alternatives --set ${JAVA_HOME}
+          export PATH=$JAVA_HOME/bin:$PATH
 
-    - name: Zip APK manually
-      run: |
-        mkdir -p output
-        zip -j output/kivy_apk_build.zip bin/*.apk
+      - name: Build APK
+        run: |
+          yes | buildozer -v android debug
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: package
+          path: bin/*.apk
