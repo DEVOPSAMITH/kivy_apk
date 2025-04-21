@@ -16,18 +16,17 @@ jobs:
     - name: Pull Kali Docker image
       run: docker pull kalilinux/kali-rolling
 
-    - name: Build APK inside Kali Docker container
-      run: |
-        docker run --rm \
-          -v ${{ github.workspace }}:/app \
+         docker run --rm \
+           -v ${{ github.workspace }}:/app \
           -w /app \
           kalilinux/kali-rolling /bin/bash -c "
             apt-get update &&
-            apt-get install -y python3-pip git zip openjdk-17-jdk wget unzip curl libncurses5 build-essential ccache \
-              libffi-dev libssl-dev libjpeg-dev zlib1g-dev \
-              && pip3 install --upgrade pip \
-              && pip3 install cython virtualenv buildozer \
-              && buildozer android debug
+            apt-get install -y python3-pip git zip openjdk-17-jdk wget unzip curl libffi-dev libssl-dev libjpeg-dev zlib1g-dev build-essential ccache \
+            && pip3 install --upgrade pip \
+            && pip3 install cython virtualenv buildozer \
+            && buildozer android debug
+          "
+
           "
 
     - name: Zip APK manually
