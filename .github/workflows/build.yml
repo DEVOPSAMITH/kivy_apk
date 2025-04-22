@@ -23,7 +23,7 @@ jobs:
           -w /app \
           kalilinux/kali-rolling /bin/bash -c "
             apt-get update &&
-            apt-get install -y python3-pip git zip openjdk-17-jdk wget unzip curl libncurses5 build-essential ccache \
+            apt-get install -y python3-pip git zip openjdk-17-jdk wget unzip curl libncurses6 build-essential ccache \
               libffi-dev libssl-dev libjpeg-dev zlib1g-dev \
               && pip3 install --upgrade pip \
               && pip3 install cython virtualenv buildozer \
