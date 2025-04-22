@@ -1,4 +1,4 @@
-name: Build Kivy APK
+name: Build Kivy APK with Docker
 
 on:
   push:
@@ -8,10 +8,23 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3  # ✅ This is required before calling local action
 
-      - name: Build Kivy APK
-        uses: ./.github/actions/kivy-to-apk
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Pull Kivy Buildozer Docker image
+        run: docker pull kivy/buildozer
+
+      - name: Build APK using Dockerized Buildozer
+        run: |
+          docker run --rm \
+            -v ${{ github.workspace }}:/home/user/app \
+            -w /home/user/app \
+            kivy/buildozer buildozer android debug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v3
         with:
-          work-dir: '.'  # or subfolder path if needed
+          name: kivy-apk
+          path: bin/*.apk
