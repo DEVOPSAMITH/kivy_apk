@@ -1,4 +1,4 @@
-name: Build Kivy APK (No Artifact Upload Action)
+name: Build Kivy APK
 
 on:
   push:
@@ -6,31 +6,12 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-apk:
-    runs-on: ubuntu-22.04  # Or 24.04 if you must
-
+  build:
+    runs-on: ubuntu-latest
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-    - name: Pull Kali Docker image
-      run: docker pull kalilinux/kali-rolling
-
-    - name: Build APK inside Kali Docker container
-      run: |
-        docker run --rm \
-          -v ${{ github.workspace }}:/app \
-          -w /app \
-          kalilinux/kali-rolling /bin/bash -c "
-            apt-get update &&
-            apt-get install -y python3-pip git zip openjdk-17-jdk wget unzip curl libncurses6 build-essential ccache \
-              libffi-dev libssl-dev libjpeg-dev zlib1g-dev \
-              && pip3 install --upgrade pip \
-              && pip3 install cython virtualenv buildozer \
-              && buildozer android debug
-          "
-
-    - name: Zip APK manually
-      run: |
-        mkdir -p output
-        zip -j output/kivy_apk_build.zip bin/*.apk
+      - name: Build Kivy APK
+        uses: ./.github/actions/kivy-to-apk
+        with:
+          work-dir: '.'  # or your subfolder if needed
