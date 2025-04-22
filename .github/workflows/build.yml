@@ -11,7 +11,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/upload-artifact@v3.1.3
+        uses: actions/checkout@v3
 
       - name: Pull Kivy Buildozer Docker image
         run: docker pull kivy/buildozer
@@ -23,8 +23,11 @@ jobs:
             -w /home/user/app \
             kivy/buildozer buildozer android debug
 
-      - name: Upload APK
-        uses: actions/upload-artifact@v3
+      - name: List APK files for debugging
+        run: ls -l bin || echo "bin/ folder missing"
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v2.3.1
         with:
           name: kivy-apk
           path: bin/*.apk
