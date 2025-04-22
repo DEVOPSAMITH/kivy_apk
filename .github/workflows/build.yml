@@ -9,9 +9,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v3  # ✅ This is required before calling local action
 
       - name: Build Kivy APK
         uses: ./.github/actions/kivy-to-apk
         with:
-          work-dir: '.'  # or your subfolder if needed
+          work-dir: '.'  # or subfolder path if needed
