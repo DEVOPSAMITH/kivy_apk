@@ -11,7 +11,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/upload-artifact@v3.1.3
 
       - name: Pull Kivy Buildozer Docker image
         run: docker pull kivy/buildozer
