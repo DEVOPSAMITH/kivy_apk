@@ -1,0 +1,34 @@
+name: 'Kivy App to APK'
+description: 'Convert Kivy app to APK using Docker'
+inputs:
+  python-version:
+    description: 'Python version to use (Docker handles it internally)'
+    default: '3.8'
+  work-dir:
+    default: '.'
+    description: 'Working directory relative to repo root'
+  buildozer-cmd:
+    default: 'buildozer android debug'
+    description: 'Buildozer command to execute inside Docker'
+
+branding:
+  color: 'green'
+  icon: 'play'
+
+runs:
+  using: "composite"
+  steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Pull Buildozer Docker image
+      shell: bash
+      run: docker pull kivy/buildozer
+
+    - name: Run Buildozer inside Docker
+      shell: bash
+      run: |
+        docker run --rm \
+          -v ${{ github.workspace }}/${{ inputs.work-dir }}:/home/user/app \
+          -w /home/user/app \
+          kivy/buildozer ${{ inputs.buildozer-cmd }}
