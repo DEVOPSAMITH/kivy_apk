@@ -19,8 +19,9 @@ jobs:
       with:
         python-version: '3.11'
 
-    - name:| Install dependencies
-      run: sudo apt update
+    - name: Install dependencies
+      run: |
+        sudo apt update
         sudo apt install -y \
           python3-pip \
           build-essential \
