@@ -19,7 +19,7 @@ jobs:
       with:
         python-version: '3.11'
 
-    - name: Install dependencies
+    - name:| Install dependencies
       run: sudo apt update
         sudo apt install -y \
           python3-pip \
