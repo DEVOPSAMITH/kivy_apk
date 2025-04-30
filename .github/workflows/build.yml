@@ -21,17 +21,25 @@ jobs:
 
     - name: Install dependencies
       run: |
-        sudo apt update
-        sudo apt install -y \
-          python3-pip \
-          build-essential \
-          git \
-          python3-dev \
-          unzip \
-          openjdk-17-jdk \
-          libncurses6 libstdc++6 libffi-dev \
-          libssl-dev
-        sudo apt-get install -y libtool automake autoconf
+            sudo apt-get update
+            sudo apt-get install -y \
+            python3-pip \
+            build-essential \
+            git \
+            openjdk-8-jdk \
+            python3-dev \
+            libssl-dev \
+            libffi-dev \
+            libsdl2-dev \
+            libsdl2-image-dev \
+            libsdl2-mixer-dev \
+            libsdl2-ttf-dev \
+            libportmidi-dev \
+            libswscale-dev \
+            libavformat-dev \
+            libavcodec-dev \
+            zlib1g-dev
+    
         pip install --upgrade pip
         pip install buildozer cython virtualenv python-for-android setuptools
 
